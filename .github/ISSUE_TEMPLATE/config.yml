@@ -1,6 +1,1 @@
-blank_issues_enabled: false
-contact_links:
-  - name: Usage questions
-    url: https://github.com/shxhxn/runready/discussions
-    about: Ask how to use or configure RunReady.
-
+blank_issues_enabled: true

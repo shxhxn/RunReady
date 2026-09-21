@@ -1,6 +1,6 @@
 # RunReady support
 
-If RunReady detects the wrong project, prepares the wrong command, or misses a dependency, please [open a GitHub issue](https://github.com/shxhxn/runready/issues/new/choose).
+If RunReady detects the wrong project, prepares the wrong command, or misses a dependency, please [open a GitHub issue](https://github.com/shxhxn/RunReady/issues/new/choose).
 
 Include:
 
@@ -11,4 +11,3 @@ Include:
 - Output from **View > Output > RunReady**, if available.
 
 Do not include API keys, passwords, tokens, private source code, or `.env` contents.
-

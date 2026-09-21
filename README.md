@@ -56,6 +56,6 @@ If the status bar is hidden, enable **View > Appearance > Status Bar**. You can 
 
 ## Feedback and author
 
-Report a wrong or missing command through [GitHub Issues](https://github.com/shxhxn/runready/issues). See the [support guide](SUPPORT.md) for the details that make a report useful.
+Report a wrong or missing command through [GitHub Issues](https://github.com/shxhxn/RunReady/issues). See the [support guide](SUPPORT.md) for the details that make a report useful.
 
-Created by [Shahan Samar](https://github.com/shxhxn).
+Created by Shahan Samar — [GitHub](https://github.com/shxhxn) · [LinkedIn](https://www.linkedin.com/in/shahan-samar-603063371/)

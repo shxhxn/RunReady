@@ -9,21 +9,21 @@
     "url": "https://github.com/shxhxn"
   },
   "license": "SEE LICENSE IN LICENSE",
-  "icon": "images/runready-icon.png",
+  "icon": "images/runready-icon-256.png",
   "galleryBanner": {
     "color": "#0736B8",
     "theme": "dark"
   },
   "pricing": "Free",
   "preview": true,
-  "qna": "https://github.com/shxhxn/runready/discussions",
-  "homepage": "https://github.com/shxhxn/runready#readme",
+  "qna": "marketplace",
+  "homepage": "https://github.com/shxhxn/RunReady#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/shxhxn/runready.git"
+    "url": "https://github.com/shxhxn/RunReady.git"
   },
   "bugs": {
-    "url": "https://github.com/shxhxn/runready/issues"
+    "url": "https://github.com/shxhxn/RunReady/issues"
   },
   "engines": {
     "vscode": "^1.95.0"
