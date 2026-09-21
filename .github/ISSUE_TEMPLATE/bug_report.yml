@@ -1,0 +1,55 @@
+name: Bug report
+description: Report a wrong, missing, or failing RunReady command
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve RunReady. Remove secrets and private code before submitting.
+  - type: input
+    id: version
+    attributes:
+      label: RunReady version
+      placeholder: 0.2.0
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: Windows 11, VS Code 1.xx
+    validations:
+      required: true
+  - type: input
+    id: project_type
+    attributes:
+      label: Project type
+      placeholder: React + Vite, FastAPI, Spring Boot, etc.
+    validations:
+      required: true
+  - type: textarea
+    id: layout
+    attributes:
+      label: Relevant folder layout
+      description: List only manifest and entry files. Do not paste secrets.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Command RunReady prepared
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected command
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: RunReady output log
+      description: Copy from View > Output > RunReady after removing private paths or data.
+

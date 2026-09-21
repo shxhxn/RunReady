@@ -1,0 +1,133 @@
+{
+  "name": "runready",
+  "displayName": "RunReady",
+  "description": "Detect how a project runs, verify dependency readiness, and prepare the exact terminal command.",
+  "version": "0.2.0",
+  "publisher": "shxhxn",
+  "author": {
+    "name": "Shahan Samar",
+    "url": "https://github.com/shxhxn"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "icon": "images/runready-icon.png",
+  "galleryBanner": {
+    "color": "#0736B8",
+    "theme": "dark"
+  },
+  "pricing": "Free",
+  "preview": true,
+  "qna": "https://github.com/shxhxn/runready/discussions",
+  "homepage": "https://github.com/shxhxn/runready#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shxhxn/runready.git"
+  },
+  "bugs": {
+    "url": "https://github.com/shxhxn/runready/issues"
+  },
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": ["Other"],
+  "keywords": [
+    "run",
+    "project",
+    "terminal",
+    "dependencies",
+    "npm",
+    "python",
+    "react",
+    "vite",
+    "developer tools",
+    "project launcher"
+  ],
+  "main": "./out/extension.js",
+  "scripts": {
+    "test": "node smoke-test.cjs",
+    "package": "vsce package",
+    "publish:patch": "vsce publish patch",
+    "publish:minor": "vsce publish minor"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^4.0.0"
+  },
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:runready.findAndRun",
+    "onCommand:runready.inspectProject",
+    "onCommand:runready.showStatusButton"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "RunReady can inspect and copy commands in Restricted Mode, but it will not send them to a terminal."
+    },
+    "virtualWorkspaces": false
+  },
+  "contributes": {
+    "commands": [
+      {
+        "command": "runready.findAndRun",
+        "title": "Find and Run Project",
+        "category": "RunReady",
+        "icon": "$(play)"
+      },
+      {
+        "command": "runready.inspectProject",
+        "title": "Inspect Project Command",
+        "category": "RunReady",
+        "icon": "$(search)"
+      },
+      {
+        "command": "runready.showStatusButton",
+        "title": "Show Status Bar Button",
+        "category": "RunReady",
+        "icon": "$(pin)"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "runready.findAndRun",
+          "when": "explorerResourceIsFolder",
+          "group": "navigation@9"
+        },
+        {
+          "command": "runready.inspectProject",
+          "when": "explorerResourceIsFolder",
+          "group": "navigation@10"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "runready.findAndRun",
+          "when": "resourceScheme == file",
+          "group": "navigation@20"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "RunReady",
+      "properties": {
+        "runready.shellStyle": {
+          "type": "string",
+          "enum": ["auto", "powershell", "bash", "cmd"],
+          "default": "auto",
+          "description": "Shell syntax used for the generated cd and chained commands. Auto uses PowerShell on Windows and Bash elsewhere."
+        },
+        "runready.includeDependencyInstall": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include safe dependency installation/restoration commands when dependencies appear to be missing."
+        },
+        "runready.scanDepth": {
+          "type": "number",
+          "default": 6,
+          "minimum": 1,
+          "maximum": 12,
+          "description": "Maximum folder depth searched for runnable projects."
+        }
+      }
+    }
+  }
+}

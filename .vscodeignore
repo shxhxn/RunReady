@@ -1,0 +1,9 @@
+*.vsix
+smoke-test.cjs
+.github/**
+.gitignore
+CONTRIBUTING.md
+PUBLISHING.md
+SECURITY.md
+node_modules/**
+package-lock.json
