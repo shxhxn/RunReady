@@ -1,8 +1,8 @@
 {
   "name": "runready",
   "displayName": "RunReady",
-  "description": "Detect how a project runs, verify dependency readiness, and prepare the exact terminal command.",
-  "version": "0.2.0",
+  "description": "Find and fill the exact command that runs your project—without guessing.",
+  "version": "0.2.1",
   "publisher": "shxhxn",
   "author": {
     "name": "Shahan Samar",

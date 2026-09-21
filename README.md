@@ -1,10 +1,31 @@
 # RunReady
 
-RunReady detects how a project runs, checks whether its dependencies look ready, and prepares one complete `cd -> install -> run` terminal command.
+**Not sure what command runs your project? Click RunReady.**
 
-Click **RunReady** in the status bar, use **RunReady: Find and Run Project** from the Command Palette, click the editor-title play button, or right-click a project folder in Explorer.
+RunReady finds the correct project folder, checks whether dependencies are ready, and fills the complete command in your terminal. It also copies the command to your clipboard.
 
-RunReady uses the active file to choose the most relevant project, opens or reuses the integrated terminal, fills the command without executing it, and copies the same command to the clipboard. Review it, then press Enter yourself.
+**Nothing runs automatically. You review the command and press Enter.**
+
+## Before RunReady
+
+![A terminal showing an incorrect command](images/overview-01-problem-web.jpg)
+
+## With RunReady
+
+![The RunReady status-bar button filling the correct command in the terminal](images/overview-02-solution-web.jpg)
+
+## How it works
+
+1. Open your project in VS Code.
+2. Click **RunReady** in the status bar.
+3. RunReady opens or reuses the terminal and fills the complete command.
+4. Review it and press Enter when you are ready.
+
+The generated command can include:
+
+- `cd` to the correct project directory.
+- A dependency installation step when dependencies appear to be missing.
+- The detected command that starts the project.
 
 ## Built-in project support
 
@@ -15,7 +36,7 @@ RunReady uses the active file to choose the most relevant project, opens or reus
 - Flutter/Dart, PHP/Composer/Laravel, Ruby/Bundler/Rails.
 - Docker Compose, C/C++ with CMake, and static websites.
 
-Detection is evidence-based. RunReady does not claim that one heuristic can understand every repository, and it will avoid inventing a command when the evidence is weak.
+Detection is based on project files, declared scripts, dependencies, and common entry points. If RunReady cannot find enough evidence, it will not invent a command.
 
 ## Unsupported or private toolchains
 
@@ -50,7 +71,7 @@ For Node projects, RunReady verifies directly declared packages in `node_modules
 
 ## Privacy and safety
 
-RunReady works locally and does not send project data to an AI service. It fills commands without executing them. Project scripts can still run arbitrary code, so review the command before pressing Enter.
+RunReady works locally and does not send project data to an AI service. It fills commands without executing them. Project scripts can still run arbitrary code, so always review the command before pressing Enter.
 
 If the status bar is hidden, enable **View > Appearance > Status Bar**. You can also run **RunReady: Show Status Bar Button**.
 
@@ -58,4 +79,4 @@ If the status bar is hidden, enable **View > Appearance > Status Bar**. You can 
 
 Report a wrong or missing command through [GitHub Issues](https://github.com/shxhxn/RunReady/issues). See the [support guide](SUPPORT.md) for the details that make a report useful.
 
-Created by Shahan Samar — [GitHub](https://github.com/shxhxn) · [LinkedIn](https://www.linkedin.com/in/shahan-samar-603063371/)
+Created by Shahan Samar - [GitHub](https://github.com/shxhxn) | [LinkedIn](https://www.linkedin.com/in/shahan-samar-603063371/)

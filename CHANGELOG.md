@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- Simplify the Marketplace description and overview.
+- Add clear before-and-after images showing the RunReady workflow.
+
 ## 0.2.0
 
 - Prepare RunReady for its first public VS Code Marketplace release.
