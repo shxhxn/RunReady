@@ -1,5 +1,9 @@
 # RunReady
 
+[![Validation](https://github.com/shxhxn/RunReady/actions/workflows/validate.yml/badge.svg)](https://github.com/shxhxn/RunReady/actions/workflows/validate.yml)
+![Version](https://img.shields.io/badge/version-0.2.4-2563eb)
+![License](https://img.shields.io/badge/license-MIT-22c55e)
+
 **Not sure what command runs your project? Click RunReady.**
 
 RunReady finds the correct project folder, checks whether dependencies are ready, and fills the complete command in your terminal. It also copies the command to your clipboard.
