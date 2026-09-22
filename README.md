@@ -20,6 +20,7 @@ RunReady finds the correct project folder, checks whether dependencies are ready
 2. Click **RunReady** in the status bar.
 3. RunReady opens or reuses the terminal and fills the complete command.
 4. Review it and press Enter when you are ready.
+5. For recognized web servers, use the displayed **Open URL** or **Copy URL** action after the server starts.
 
 The generated command can include:
 
@@ -31,10 +32,11 @@ The generated command can include:
 
 - Node.js and package scripts using npm, pnpm, Yarn, or Bun.
 - React, Vite, Next.js, Nuxt, SvelteKit, Astro, Angular, Electron, Express, and VS Code extensions.
-- Python, FastAPI, Flask, and Django, including common nested backend layouts.
+- Python, Streamlit, FastAPI, Flask, and Django, including README-documented commands, executable `__main__` files, and nested backend layouts.
 - Rust/Cargo, Go, Java/Maven, Java/Gradle, .NET and F#.
 - Flutter/Dart, PHP/Composer/Laravel, Ruby/Bundler/Rails.
-- Docker Compose, C/C++ with CMake, and static websites.
+- Deno, Swift packages, Elixir/Mix/Phoenix, and R/Shiny.
+- Docker Compose, C/C++ with CMake, Make, Just, Taskfile, Procfile, and static websites.
 
 Detection is based on project files, declared scripts, dependencies, and common entry points. If RunReady cannot find enough evidence, it will not invent a command.
 
@@ -67,7 +69,7 @@ For multiple choices, replace `command` with:
 
 ## Dependency checks
 
-For Node projects, RunReady verifies directly declared packages in `node_modules`, including hoisted workspace packages. For Python projects, it compares direct requirements with installed distribution metadata in `.venv` or `venv`. Ecosystems such as Cargo, Go, Maven, and Gradle resolve dependencies through their own runners.
+For Node projects, RunReady verifies directly declared packages in `node_modules`, including hoisted workspace packages. It also checks recognized CSS and build-tool references such as Tailwind, PostCSS, Sass, and Less when they are missing from both the manifest and installed packages. For Python projects, it validates the local environment's actual interpreter, compares direct requirements with installed distribution metadata, repairs incomplete environments, and enables the selected environment only when it is not already active. Ecosystems such as Cargo, Go, Maven, and Gradle resolve dependencies through their own runners.
 
 ## Privacy and safety
 

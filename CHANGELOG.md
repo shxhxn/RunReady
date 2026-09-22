@@ -1,43 +1,15 @@
 # Changelog
 
-## 0.2.1
+## 0.2.4
 
-- Simplify the Marketplace description and overview.
-- Add clear before-and-after images showing the RunReady workflow.
+- Recognize Streamlit dashboards, README-documented Python commands, uncommon Python entry filenames, and additional dependency manifests.
+- Add support for Deno, Make, Just, Taskfile, Procfile, Swift, Elixir, R/Shiny, and more Maven applications.
+- Validate the actual Python interpreter before trusting a virtual environment, repair incomplete environments, and avoid activating an environment that is already active.
+- Support Flask application factories instead of assuming every module exports `app`.
+- Show stable localhost URLs for recognized web servers and provide **Open URL** and **Copy URL** actions.
+- Detect common build packages such as Tailwind when source files reference them but they are not installed or declared.
+- Improve dependency checks and present multiple verified run choices when a project has more than one runnable workflow.
 
-## 0.2.0
+## 0.2.0 - Initial public release
 
-- Prepare RunReady for its first public VS Code Marketplace release.
-- Add Marketplace branding, support links, GitHub issue templates, and release instructions.
-- Add repeatable package and update commands.
-- Make the smoke test self-contained so it does not depend on the developer's local projects.
-- Add `.runready.json` definitions for unsupported or private toolchains.
-
-## 0.1.4
-
-- Automatically choose the deepest detected project containing the active editor file.
-
-## 0.1.3
-
-- Fix a crash when VS Code's default terminal profile setting is `null`.
-- Make the main RunReady button fill and copy the command without executing it.
-- Reuse an open terminal or create one automatically.
-- Detect Python applications with nested `backend/app/main.py` and similar layouts.
-- Verify direct `requirements.txt` packages against the local virtual environment.
-- Report unexpected failures through the RunReady output channel.
-
-## 0.1.2
-
-- Give the status item a unique ID so an older hidden state cannot suppress it.
-- Show the status item unconditionally and raise its placement priority.
-- Add a **RunReady: Show Status Bar Button** recovery command.
-
-## 0.1.1
-
-- Activate automatically after VS Code starts so the RunReady status item appears immediately.
-- Add an editor-title play button as an additional entry point.
-- Document how to restore VS Code's globally hidden status bar.
-
-## 0.1.0
-
-- Initial project detection and full command generation.
+- Detect common project types, locate the correct folder, check dependencies, and fill the complete command without executing it.

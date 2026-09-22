@@ -93,20 +93,26 @@ async function pickCandidate(resource) {
         void vscode.window.showWarningMessage("RunReady could not find a verified run command here. Open the folder containing the project's manifest or entry file.");
         return undefined;
     }
+    let selectableCandidates = candidates;
     const activeUri = vscode.window.activeTextEditor?.document.uri;
     if (activeUri?.scheme === "file") {
         const matches = candidates
             .filter((item) => {
             const relative = path.relative(item.rootDir, activeUri.fsPath);
             return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
-        })
+            })
             .sort((left, right) => right.rootDir.length - left.rootDir.length);
-        if (matches.length > 0)
-            return matches[0];
+        if (matches.length > 0) {
+            const deepestRoot = path.resolve(matches[0].rootDir);
+            const deepestMatches = matches.filter((item) => path.resolve(item.rootDir) === deepestRoot);
+            if (deepestMatches.length === 1)
+                return deepestMatches[0];
+            selectableCandidates = deepestMatches;
+        }
     }
-    if (candidates.length === 1)
-        return candidates[0];
-    const items = candidates.map((item) => {
+    if (selectableCandidates.length === 1)
+        return selectableCandidates[0];
+    const items = selectableCandidates.map((item) => {
         const dependencyState = statePresentation[item.dependencies.state];
         return {
             label: `$(play) ${item.name}`,
@@ -126,15 +132,16 @@ async function pickCandidate(resource) {
 async function pickRunChoice(candidate) {
     if (candidate.runChoices.length === 1)
         return candidate.runChoices[0];
+    const dependencyState = statePresentation[candidate.dependencies.state];
     const items = candidate.runChoices.map((item) => ({
         label: item.recommended ? `$(star-full) ${item.label}` : `$(terminal) ${item.label}`,
         description: item.command,
-        detail: item.description,
+        detail: item.url ? `${item.description} - opens at ${item.url}` : item.description,
         choice: item,
     }));
     return (await vscode.window.showQuickPick(items, {
-        title: `RunReady: how should ${candidate.name} run?`,
-        placeHolder: "The starred command is the strongest match",
+        title: `RunReady: how should ${candidate.name} run? - ${dependencyState.label}`,
+        placeHolder: `${candidate.dependencies.summary} The starred command is the strongest match.`,
         matchOnDescription: true,
         matchOnDetail: true,
     }))?.choice;
@@ -270,7 +277,14 @@ async function performAction(plan, action) {
         const terminal = createProjectTerminal(plan);
         terminal.show(false);
         terminal.sendText(plan.fullCommand, false);
-        void vscode.window.showInformationMessage("RunReady filled the terminal and copied the command. Press Enter when you are ready to run it.");
+        const dependencyState = statePresentation[plan.candidate.dependencies.state];
+        const urlHint = plan.choice.url ? ` After it starts, open ${plan.choice.url}.` : "";
+        const actions = plan.choice.url ? ["Open URL", "Copy URL"] : [];
+        const selected = await vscode.window.showInformationMessage(`RunReady filled and copied the command. ${dependencyState.label}: ${plan.candidate.dependencies.summary} Press Enter when you are ready to run it.${urlHint}`, ...actions);
+        if (selected === "Open URL")
+            await vscode.env.openExternal(vscode.Uri.parse(plan.choice.url));
+        else if (selected === "Copy URL")
+            await vscode.env.clipboard.writeText(plan.choice.url);
         return;
     }
     const confirmation = await vscode.window.showWarningMessage(`Run this command now? ${plan.fullCommand}`, { modal: true, detail: "Project scripts can execute arbitrary code. Only continue if you trust this workspace." }, "Run Command");

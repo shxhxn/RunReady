@@ -2,7 +2,7 @@
   "name": "runready",
   "displayName": "RunReady",
   "description": "Find and fill the exact command that runs your project—without guessing.",
-  "version": "0.2.1",
+  "version": "0.2.4",
   "publisher": "shxhxn",
   "author": {
     "name": "Shahan Samar",
@@ -36,6 +36,7 @@
     "dependencies",
     "npm",
     "python",
+    "streamlit",
     "react",
     "vite",
     "developer tools",

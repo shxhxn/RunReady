@@ -88,12 +88,25 @@ function commandForShell(command, shellStyle, platform = process.platform) {
     }
     return command.replace(/^(npm|npx|pnpm|yarn|corepack|code)(?=\s)/, (executable) => `${executable}.cmd`);
 }
+function pythonActivationCommand(environmentName, shellStyle) {
+    switch (shellStyle) {
+        case "powershell":
+            return `try { $runreadyVenv = (Resolve-Path -LiteralPath '${environmentName.replace(/'/g, "''")}' -ErrorAction Stop).Path; if ($env:VIRTUAL_ENV -ne $runreadyVenv) { $env:VIRTUAL_ENV = $runreadyVenv; $env:PATH = "$runreadyVenv\\Scripts;$env:PATH" }; $global:LASTEXITCODE = 0 } catch { Write-Error $_; $global:LASTEXITCODE = 1 }`;
+        case "bash":
+            return `runready_venv="$(pwd)/${environmentName.replace(/"/g, '\\"')}"; if [ "\${VIRTUAL_ENV:-}" != "$runready_venv" ]; then export VIRTUAL_ENV="$runready_venv"; export PATH="$runready_venv/bin:$PATH"; fi`;
+        case "cmd":
+            return `if /I not "%VIRTUAL_ENV%"=="%CD%\\${environmentName.replace(/"/g, '""')}" (set "VIRTUAL_ENV=%CD%\\${environmentName.replace(/"/g, '""')}" & set "PATH=%CD%\\${environmentName.replace(/"/g, '""')}\\Scripts;%PATH%")`;
+    }
+}
 function createCommandPlan(candidate, choice, shellStyle, includeDependencyInstall) {
     const setupCommands = includeDependencyInstall &&
         (candidate.dependencies.state === "missing" || candidate.dependencies.state === "unknown")
         ? candidate.dependencies.setupCommands
         : [];
-    const commands = [...setupCommands, ...(choice.commandSequence ?? [choice.command])].map((command) => commandForShell(command, shellStyle));
+    const activationCommands = typeof candidate.pythonEnvironment === "string"
+        ? [pythonActivationCommand(candidate.pythonEnvironment, shellStyle)]
+        : [];
+    const commands = [...setupCommands, ...activationCommands, ...(choice.commandSequence ?? [choice.command])].map((command) => commandForShell(command, shellStyle));
     return {
         candidate,
         choice,
