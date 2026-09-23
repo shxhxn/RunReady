@@ -10,22 +10,22 @@ permissions:
 
 jobs:
   release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
       - run: npm ci
       - run: npm test
       - run: npm run package
       - name: Publish GitHub release
+        shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >-
-          gh release create "$GITHUB_REF_NAME"
-          runready-*.vsix
-          --verify-tag
-          --title "RunReady ${GITHUB_REF_NAME#v}"
-          --generate-notes
+        run: |
+          $vsix = Get-ChildItem -Path "runready-*.vsix" | Select-Object -First 1
+          if (-not $vsix) { throw "Packaged VSIX was not found." }
+          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          gh release create $env:GITHUB_REF_NAME $vsix.FullName --verify-tag --title "RunReady $version" --generate-notes
