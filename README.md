@@ -10,6 +10,13 @@ RunReady finds the correct project folder, checks whether dependencies are ready
 
 **Nothing runs automatically. You review the command and press Enter.**
 
+## Install
+
+- Download the latest `.vsix` from [GitHub Releases](https://github.com/shxhxn/RunReady/releases/latest), then in VS Code choose **Extensions: Install from VSIX...** from the Command Palette.
+- Or install RunReady from the Visual Studio Marketplace when it is available there.
+
+GitHub's automatically generated source archives are also available on every release page.
+
 ## Before RunReady
 
 ![A terminal showing an incorrect command](images/overview-01-problem-web.jpg)

@@ -3,3 +3,10 @@ node_modules/
 *.log
 .DS_Store
 
+# Local editor and stale TypeScript workspace files. The published v0.2.4
+# runtime source is the checked-in JavaScript under out/.
+.vscode/
+src/
+tsconfig.json
+out/**/*.map
+out/test/

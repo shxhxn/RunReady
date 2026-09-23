@@ -28,5 +28,6 @@ npm run publish:minor
 
 The publish command increments `package.json`, publishes the new version, and, in a Git repository, creates a version commit and tag. Push the commit and tag to GitHub after verifying the release.
 
-Use release versions `0.2.x`, `0.4.x`, and so on. If pre-releases are added later, use odd minor versions such as `0.3.x`, as recommended by the VS Code documentation.
+Pushing a `v*` tag (for example, `v0.2.4`) also runs the GitHub release workflow. It validates the extension, builds the matching VSIX, creates a GitHub Release, and attaches the VSIX for direct download.
 
+Use release versions `0.2.x`, `0.4.x`, and so on. If pre-releases are added later, use odd minor versions such as `0.3.x`, as recommended by the VS Code documentation.

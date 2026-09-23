@@ -2,12 +2,17 @@
 *.log
 smoke-test.cjs
 .github/**
+.vscode/**
 .gitignore
 CONTRIBUTING.md
 PUBLISHING.md
 SECURITY.md
 node_modules/**
 package-lock.json
+src/**
+tsconfig.json
+out/**/*.map
+out/test/**
 images/runready-icon.png
 images/publisher-logo-128.png
 images/overview-01-problem.png
