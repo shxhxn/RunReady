@@ -98,6 +98,19 @@ function pythonActivationCommand(environmentName, shellStyle) {
             return `if /I not "%VIRTUAL_ENV%"=="%CD%\\${environmentName.replace(/"/g, '""')}" (set "VIRTUAL_ENV=%CD%\\${environmentName.replace(/"/g, '""')}" & set "PATH=%CD%\\${environmentName.replace(/"/g, '""')}\\Scripts;%PATH%")`;
     }
 }
+function environmentCommand(environmentVariables, shellStyle) {
+    const entries = Object.entries(environmentVariables).filter(([name, value]) => /^[A-Za-z_][A-Za-z0-9_]*$/.test(name) && typeof value === "string");
+    if (entries.length === 0)
+        return undefined;
+    switch (shellStyle) {
+        case "powershell":
+            return `${entries.map(([name, value]) => `$env:${name} = ${quotePowerShell(value)}`).join("; ")}; $global:LASTEXITCODE = 0`;
+        case "bash":
+            return entries.map(([name, value]) => `export ${name}=${quotePosix(value)}`).join("; ");
+        case "cmd":
+            return entries.map(([name, value]) => `set "${name}=${value.replace(/"/g, '""')}"`).join(" & ");
+    }
+}
 function createCommandPlan(candidate, choice, shellStyle, includeDependencyInstall) {
     const setupCommands = includeDependencyInstall &&
         (candidate.dependencies.state === "missing" || candidate.dependencies.state === "unknown")
@@ -106,7 +119,10 @@ function createCommandPlan(candidate, choice, shellStyle, includeDependencyInsta
     const activationCommands = typeof candidate.pythonEnvironment === "string"
         ? [pythonActivationCommand(candidate.pythonEnvironment, shellStyle)]
         : [];
-    const commands = [...setupCommands, ...activationCommands, ...(choice.commandSequence ?? [choice.command])].map((command) => commandForShell(command, shellStyle));
+    const environmentCommands = choice.environmentVariables && typeof choice.environmentVariables === "object"
+        ? [environmentCommand(choice.environmentVariables, shellStyle)].filter(Boolean)
+        : [];
+    const commands = [...setupCommands, ...activationCommands, ...environmentCommands, ...(choice.commandSequence ?? [choice.command])].map((command) => commandForShell(command, shellStyle));
     return {
         candidate,
         choice,

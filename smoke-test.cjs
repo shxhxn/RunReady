@@ -1,6 +1,7 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const Module = require("node:module");
+const net = require("node:net");
 const os = require("node:os");
 const path = require("node:path");
 
@@ -18,6 +19,7 @@ let addNewLine;
 let copiedText;
 let information;
 let failure;
+let occupiedServer;
 
 const terminal = {
   show() {},
@@ -218,9 +220,35 @@ Module._load = function (request, parent, isMain) {
     assert.equal(tailwindCandidates[0].dependencies.state, "missing");
     assert.deepEqual(tailwindCandidates[0].dependencies.setupCommands, ["npm install tailwindcss"]);
     assert.equal(tailwindCandidates[0].runChoices[0].url, "http://localhost:3000");
+
+    occupiedServer = net.createServer();
+    await new Promise((resolve, reject) => {
+      occupiedServer.once("error", reject);
+      occupiedServer.listen(0, "127.0.0.1", resolve);
+    });
+    const occupiedPort = occupiedServer.address().port;
+    const occupiedPortRoot = path.join(fixtureRoot, "occupied-port-app");
+    fs.mkdirSync(path.join(occupiedPortRoot, "backend"), { recursive: true });
+    fs.writeFileSync(path.join(occupiedPortRoot, "package.json"), JSON.stringify({ scripts: { start: "node backend/server.js" } }));
+    fs.writeFileSync(path.join(occupiedPortRoot, "backend", "server.js"), `const DEFAULT_PORT = ${occupiedPort};\nconst port = Number(process.env.PORT) || DEFAULT_PORT;\nserver.listen(port);\n`);
+    const occupiedPortCandidates = await analyzeWorkspace(occupiedPortRoot);
+    const occupiedChoice = occupiedPortCandidates[0].runChoices[0];
+    assert.notEqual(Number(occupiedChoice.environmentVariables.PORT), occupiedPort);
+    assert.match(occupiedChoice.notice, new RegExp(`Port ${occupiedPort} is already in use`));
+    assert.equal(occupiedChoice.url, `http://localhost:${occupiedChoice.environmentVariables.PORT}`);
+    const occupiedPlan = createCommandPlan(occupiedPortCandidates[0], occupiedChoice, "powershell", true);
+    assert.ok(occupiedPlan.fullCommand.includes(`$env:PORT = '${occupiedChoice.environmentVariables.PORT}'`));
+    const occupiedBashPlan = createCommandPlan(occupiedPortCandidates[0], occupiedChoice, "bash", true);
+    assert.ok(occupiedBashPlan.fullCommand.includes(`export PORT='${occupiedChoice.environmentVariables.PORT}'`));
+    const occupiedCmdPlan = createCommandPlan(occupiedPortCandidates[0], occupiedChoice, "cmd", true);
+    assert.ok(occupiedCmdPlan.fullCommand.includes(`set "PORT=${occupiedChoice.environmentVariables.PORT}"`));
+    await new Promise((resolve) => occupiedServer.close(resolve));
+    occupiedServer = undefined;
     console.log("RunReady integration smoke test passed");
   } finally {
     Module._load = originalLoad;
+    if (occupiedServer?.listening)
+      await new Promise((resolve) => occupiedServer.close(resolve));
     fs.rmSync(fixtureRoot, { recursive: true, force: true });
   }
 })().catch((error) => {

@@ -35,6 +35,7 @@ var __importStar = (this && this.__importStar) || (function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.analyzeWorkspace = analyzeWorkspace;
 const node_fs_1 = require("node:fs");
+const node_net_1 = require("node:net");
 const path = __importStar(require("node:path"));
 const EXACT_MARKERS = new Set([
     ".runready.json",
@@ -388,6 +389,48 @@ function nodeRunUrl(projectType, script) {
     const port = explicitPort ?? defaultPorts[projectType];
     return port ? `http://localhost:${port}` : undefined;
 }
+function extractNodeEntryFile(script) {
+    return /\bnode(?:\.exe)?\s+(?:--[a-zA-Z0-9_-]+(?:=[^\s]+)?\s+)*["']?([^"'\s]+\.(?:js|cjs|mjs))["']?/i.exec(script)?.[1];
+}
+async function inferNodeServer(rootDir, script) {
+    const entryFile = extractNodeEntryFile(script);
+    if (!entryFile || !(await pathExists(path.join(rootDir, entryFile))))
+        return undefined;
+    const content = await readText(path.join(rootDir, entryFile));
+    const supportsPortEnvironment = /process\.env(?:\.PORT|\[['"]PORT['"]\])/.test(content);
+    const directEnvironmentFallback = /process\.env(?:\.PORT|\[['"]PORT['"]\])[^\r\n;]{0,120}?(?:\|\||\?\?)\s*(\d{2,5})/.exec(content)?.[1];
+    const portConstants = [...content.matchAll(/\b(?:const|let|var)\s+([A-Za-z_][A-Za-z0-9_]*PORT[A-Za-z0-9_]*)\s*=\s*(\d{2,5})\b/gi)];
+    const referencedConstant = portConstants.find((match) => new RegExp(`(?:listen\\s*\\(\\s*|(?:\\|\\||\\?\\?)\\s*)${match[1]}\\b`).test(content));
+    const directListenPort = /\.listen\s*\(\s*(\d{2,5})\b/.exec(content)?.[1];
+    const port = Number(directEnvironmentFallback ?? referencedConstant?.[2] ?? directListenPort);
+    if (!Number.isInteger(port) || port < 1 || port > 65535)
+        return undefined;
+    return { port, supportsPortEnvironment, entryFile };
+}
+async function isPortAvailable(port) {
+    return new Promise((resolve) => {
+        const server = (0, node_net_1.createServer)();
+        let settled = false;
+        const finish = (available) => {
+            if (settled)
+                return;
+            settled = true;
+            resolve(available);
+        };
+        server.unref();
+        server.once("error", () => finish(false));
+        server.listen({ port, host: "127.0.0.1", exclusive: true }, () => {
+            server.close(() => finish(true));
+        });
+    });
+}
+async function findAvailablePort(startPort, attempts = 25) {
+    for (let port = startPort; port < startPort + attempts && port <= 65535; port += 1) {
+        if (await isPortAvailable(port))
+            return port;
+    }
+    return undefined;
+}
 async function analyzeNode(rootDir, scanRoot) {
     const packagePath = path.join(rootDir, "package.json");
     const pkg = await readJson(packagePath);
@@ -403,7 +446,33 @@ async function analyzeNode(rootDir, scanRoot) {
         const rightIndex = preferred.indexOf(right);
         return (leftIndex < 0 ? 99 : leftIndex) - (rightIndex < 0 ? 99 : rightIndex);
     });
-    const runChoices = likelyScripts.map((name, index) => choice(`${manager} script: ${name}`, scriptCommand(manager, name), scripts[name], index === 0, nodeRunUrl(projectType, scripts[name])));
+    const runChoices = [];
+    for (const [index, name] of likelyScripts.entries()) {
+        const item = choice(`${manager} script: ${name}`, scriptCommand(manager, name), scripts[name], index === 0, nodeRunUrl(projectType, scripts[name]));
+        const server = await inferNodeServer(rootDir, scripts[name]);
+        if (server) {
+            item.url = `http://localhost:${server.port}`;
+            if (!(await isPortAvailable(server.port))) {
+                if (server.supportsPortEnvironment) {
+                    const availablePort = await findAvailablePort(server.port + 1);
+                    if (availablePort) {
+                        item.environmentVariables = { PORT: String(availablePort) };
+                        item.url = `http://localhost:${availablePort}`;
+                        item.notice = `Port ${server.port} is already in use, so RunReady selected port ${availablePort}.`;
+                    }
+                    else {
+                        item.notice = `Port ${server.port} is already in use and no nearby free port was found.`;
+                        item.blockedReason = item.notice;
+                    }
+                }
+                else {
+                    item.notice = `Port ${server.port} is already in use and this entry file does not read the PORT environment variable.`;
+                    item.blockedReason = item.notice;
+                }
+            }
+        }
+        runChoices.push(item);
+    }
     if (pkg.engines?.vscode) {
         runChoices.forEach((item) => {
             item.recommended = false;

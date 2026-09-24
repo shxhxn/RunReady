@@ -37,6 +37,7 @@ The generated command can include:
 
 - `cd` to the correct project directory.
 - A dependency installation step when dependencies appear to be missing.
+- A safe alternate `PORT` when a Node server's default port is already occupied and the project supports the `PORT` environment variable.
 - The detected command that starts the project.
 
 ## Built-in project support

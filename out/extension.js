@@ -136,7 +136,7 @@ async function pickRunChoice(candidate) {
     const items = candidate.runChoices.map((item) => ({
         label: item.recommended ? `$(star-full) ${item.label}` : `$(terminal) ${item.label}`,
         description: item.command,
-        detail: item.url ? `${item.description} - opens at ${item.url}` : item.description,
+        detail: [item.description, item.notice, item.url ? `Opens at ${item.url}` : undefined].filter(Boolean).join(" - "),
         choice: item,
     }));
     return (await vscode.window.showQuickPick(items, {
@@ -273,14 +273,25 @@ async function performAction(plan, action) {
         return;
     }
     if (action === "fill") {
+        if (plan.choice.blockedReason) {
+            const blockedActions = plan.choice.url ? ["Open Existing URL", "Fill Anyway"] : ["Fill Anyway"];
+            const blockedAction = await vscode.window.showWarningMessage(`RunReady stopped before filling a command that is expected to fail. ${plan.choice.blockedReason}`, ...blockedActions);
+            if (blockedAction === "Open Existing URL" && plan.choice.url) {
+                await vscode.env.openExternal(vscode.Uri.parse(plan.choice.url));
+                return;
+            }
+            if (blockedAction !== "Fill Anyway")
+                return;
+        }
         await vscode.env.clipboard.writeText(plan.fullCommand);
         const terminal = createProjectTerminal(plan);
         terminal.show(false);
         terminal.sendText(plan.fullCommand, false);
         const dependencyState = statePresentation[plan.candidate.dependencies.state];
+        const noticeHint = plan.choice.notice ? ` ${plan.choice.notice}` : "";
         const urlHint = plan.choice.url ? ` After it starts, open ${plan.choice.url}.` : "";
         const actions = plan.choice.url ? ["Open URL", "Copy URL"] : [];
-        const selected = await vscode.window.showInformationMessage(`RunReady filled and copied the command. ${dependencyState.label}: ${plan.candidate.dependencies.summary} Press Enter when you are ready to run it.${urlHint}`, ...actions);
+        const selected = await vscode.window.showInformationMessage(`RunReady filled and copied the command. ${dependencyState.label}: ${plan.candidate.dependencies.summary}${noticeHint} Press Enter when you are ready to run it.${urlHint}`, ...actions);
         if (selected === "Open URL")
             await vscode.env.openExternal(vscode.Uri.parse(plan.choice.url));
         else if (selected === "Copy URL")
