@@ -10,6 +10,8 @@ RunReady finds the correct project folder, checks whether dependencies are ready
 
 **Nothing runs automatically. You review the command and press Enter.**
 
+**Project not running?** [Send me the exact error](https://github.com/shxhxn/RunReady/issues/new?template=bug_report.yml) and the command RunReady gave you. You do not need to know the correct command. [Share feedback or request project support](https://github.com/shxhxn/RunReady/issues/new?template=feedback.yml).
+
 ## Install
 
 - Download the latest `.vsix` from [GitHub Releases](https://github.com/shxhxn/RunReady/releases/latest), then in VS Code choose **Extensions: Install from VSIX...** from the Command Palette.
@@ -91,6 +93,8 @@ If the status bar is hidden, enable **View > Appearance > Status Bar**. You can 
 
 ## Feedback and author
 
-Report a wrong or missing command through [GitHub Issues](https://github.com/shxhxn/RunReady/issues). See the [support guide](SUPPORT.md) for the details that make a report useful.
+If a project does not run, [report the command and exact error](https://github.com/shxhxn/RunReady/issues/new?template=bug_report.yml). The form collects your project setup, environment, and RunReady version so I can investigate. A working command is optional.
+
+For ideas or general feedback, use the [feedback form](https://github.com/shxhxn/RunReady/issues/new?template=feedback.yml). You can follow replies and fixes on your issue. See the [support guide](SUPPORT.md) for help collecting terminal output.
 
 Created by Shahan Samar - [GitHub](https://github.com/shxhxn) | [LinkedIn](https://www.linkedin.com/in/shahan-samar-603063371/)

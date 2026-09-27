@@ -1,1 +1,8 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
+contact_links:
+  - name: RunReady support guide
+    url: https://github.com/shxhxn/RunReady/blob/main/SUPPORT.md
+    about: How to collect an error message and follow up on your report.
+  - name: Review RunReady on the VS Code Marketplace
+    url: https://marketplace.visualstudio.com/items?itemName=shxhxn.runready
+    about: Open the extension's Marketplace page to leave a rating or review.

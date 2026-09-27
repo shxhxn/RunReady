@@ -1,55 +1,108 @@
-name: Bug report
-description: Report a wrong, missing, or failing RunReady command
-title: "[Bug]: "
+name: Project won't run / report an error
+description: Send the command RunReady gave you and the exact error so I can investigate.
+title: "[Run problem]: "
 labels:
   - bug
+assignees:
+  - shxhxn
 body:
   - type: markdown
     attributes:
-      value: Thanks for helping improve RunReady. Remove secrets and private code before submitting.
-  - type: input
-    id: version
+      value: |
+        Thanks for testing RunReady! Use a short issue title that describes the problem.
+
+        Paste the command and error as text so I can reproduce the problem. You do not need to know the correct command.
+        If RunReady did not produce a command, paste its notification message instead.
+
+        Reports are public. Remove passwords, API keys, tokens, .env contents, and private project data before submitting.
+  - type: dropdown
+    id: problem
     attributes:
-      label: RunReady version
-      placeholder: 0.2.0
-    validations:
-      required: true
-  - type: input
-    id: environment
-    attributes:
-      label: Environment
-      placeholder: Windows 11, VS Code 1.xx
-    validations:
-      required: true
-  - type: input
-    id: project_type
-    attributes:
-      label: Project type
-      placeholder: React + Vite, FastAPI, Spring Boot, etc.
-    validations:
-      required: true
-  - type: textarea
-    id: layout
-    attributes:
-      label: Relevant folder layout
-      description: List only manifest and entry files. Do not paste secrets.
+      label: What went wrong?
+      options:
+        - The generated command failed in the terminal
+        - RunReady could not find a run command
+        - RunReady chose the wrong project or command
+        - A dependency or environment step failed
+        - The command ran but the app or website did not open
+        - RunReady itself showed an error
+        - Something else
     validations:
       required: true
   - type: textarea
     id: actual
     attributes:
-      label: Command RunReady prepared
+      label: Full command RunReady prepared
+      description: Copy the entire command from your terminal or clipboard. If no command appeared, write "No command was generated."
+      placeholder: Paste the complete command here, with private details removed.
+      render: shell
     validations:
       required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Exact error message or terminal output
+      description: Copy the error and the lines around it as text. For an app that does not open, include the server output or URL. For a detection failure, paste RunReady's message.
+      placeholder: Paste the exact error here. A screenshot can be added in the optional field below.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: layout
+    attributes:
+      label: Project type and relevant files
+      description: Name the language or framework and list the manifest and entry files with their folders. Say "Not sure" if you do not know. Include a public repository link if you have one.
+      placeholder: |
+        Python + Streamlit
+        my-project/
+          requirements.txt
+          dashboard.py
+          .venv/
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Operating system and terminal shell
+      description: For example Windows + PowerShell, macOS + zsh, Linux + bash, or WSL. Write "Not sure" for anything you do not know.
+      placeholder: Windows 11, PowerShell, VS Code 1.xxx
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: RunReady version
+      description: Find it in VS Code Extensions > RunReady. Write "Not sure" if you cannot find it.
+      placeholder: 0.2.5
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps and screenshots (optional)
+      description: Tell me which folder or file was open, what you selected in RunReady, and what you expected. Drag screenshots here if helpful, after removing private details.
+      placeholder: |
+        1. Opened the project folder in VS Code.
+        2. Clicked RunReady and selected ...
+        3. Pressed Enter in the terminal.
+        4. Expected ..., but ... happened.
   - type: textarea
     id: expected
     attributes:
-      label: Expected command
-    validations:
-      required: true
+      label: A command that works (optional)
+      description: Only fill this in if you already know one. You do not need to solve the problem before reporting it.
+      render: shell
   - type: textarea
     id: log
     attributes:
-      label: RunReady output log
+      label: RunReady diagnostic log (optional)
       description: Copy from View > Output > RunReady after removing private paths or data.
-
+      render: text
+  - type: checkboxes
+    id: public_report
+    attributes:
+      label: Before submitting
+      options:
+        - label: I have removed secrets and private project data from this public report.
+          required: true
